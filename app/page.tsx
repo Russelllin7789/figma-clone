@@ -1,9 +1,3 @@
-import { Room } from "./Room";
-
 export default function Page() {
-  return (
-    <Room>
-      <h1>Testing~</h1>
-    </Room>
-  );
+  return <h1 className="text-3xl text-white">Testing~</h1>;
 }
