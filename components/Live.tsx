@@ -23,24 +23,10 @@ const Live = () => {
 
   const broadcast = useBroadcastEvent();
 
-  useEventListener((eventData) => {
-    const event = eventData.event as ReactionEvent;
-
-    setReactions((reactions) =>
-      reactions.concat([
-        {
-          point: { x: event.x, y: event.y },
-          value: event.value,
-          timestamp: Date.now(),
-        },
-      ])
-    );
-  });
-
   // *** Clear the reactions after 1 sec ***
   useInterval(() => {
     setReactions((reactions) =>
-      reactions.filter((r) => r.timestamp > Date.now() - 4000)
+      reactions.filter((reaction) => reaction.timestamp > Date.now() - 4000)
     );
   }, 1000);
 
@@ -67,6 +53,55 @@ const Live = () => {
       });
     }
   }, 100);
+
+  useEventListener((eventData) => {
+    const event = eventData.event as ReactionEvent;
+
+    setReactions((reactions) =>
+      reactions.concat([
+        {
+          point: { x: event.x, y: event.y },
+          value: event.value,
+          timestamp: Date.now(),
+        },
+      ])
+    );
+  });
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "/") {
+        e.preventDefault();
+      }
+    };
+
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "/") {
+        setCursorState({
+          mode: CursorMode.Chat,
+          previousMessage: null,
+          message: "",
+        });
+      } else if (e.key === "Escape") {
+        updateMyPresence({ message: "" });
+        setCursorState({
+          mode: CursorMode.Hidden,
+        });
+      } else if (e.key === "e") {
+        setCursorState({
+          mode: CursorMode.ReactionSelector,
+        });
+      }
+    };
+
+    window.addEventListener("keyup", onKeyUp);
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [updateMyPresence]);
 
   // return a memoized version of the callback
   const handlePointerMove = useCallback((event: React.PointerEvent) => {
@@ -103,59 +138,18 @@ const Live = () => {
     [cursorState.mode, setCursorState]
   );
 
-  const handlePointerUp = useCallback(
-    (event: React.PointerEvent) => {
-      setCursorState((state: CursorState) =>
-        cursorState.mode === CursorMode.Reaction
-          ? { ...state, isPressed: true }
-          : state
-      );
-    },
-    [cursorState.mode, setCursorState]
-  );
+  // hide the cursor when the mouse is up
+  const handlePointerUp = useCallback(() => {
+    setCursorState((state: CursorState) =>
+      cursorState.mode === CursorMode.Reaction
+        ? { ...state, isPressed: false }
+        : state
+    );
+  }, [cursorState.mode, setCursorState]);
 
   const setReaction = useCallback((reaction: string) => {
-    setCursorState({
-      mode: CursorMode.Reaction,
-      reaction,
-      isPressed: false,
-    });
+    setCursorState({ mode: CursorMode.Reaction, reaction, isPressed: false });
   }, []);
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "/") {
-        e.preventDefault();
-      }
-    };
-
-    const onKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "/") {
-        setCursorState({
-          mode: CursorMode.Chat,
-          previousMessage: null,
-          message: "",
-        });
-      } else if (e.key === "Escape") {
-        updateMyPresence({ message: "" });
-        setCursorState({
-          mode: CursorMode.Hidden,
-        });
-      } else if (e.key === "e") {
-        setCursorState({
-          mode: CursorMode.ReactionSelector,
-        });
-      }
-    };
-
-    window.addEventListener("keyup", onKeyUp);
-    window.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      window.removeEventListener("keyup", onKeyUp);
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [updateMyPresence]);
 
   return (
     <div
