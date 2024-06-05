@@ -111,7 +111,7 @@ const Live = ({ canvasRef }: Props) => {
   const handlePointerMove = useCallback((event: React.PointerEvent) => {
     event.preventDefault();
 
-    if (cursor === null && cursorState.mode !== CursorMode.ReactionSelector) {
+    if (cursor == null && cursorState.mode !== CursorMode.ReactionSelector) {
       // to get the width of the actual cursor
       const x = event.clientX - event.currentTarget.getBoundingClientRect().x;
       const y = event.clientY - event.currentTarget.getBoundingClientRect().y;
@@ -186,7 +186,11 @@ const Live = ({ canvasRef }: Props) => {
       )}
 
       {cursorState.mode === CursorMode.ReactionSelector && (
-        <ReactionSelector setReaction={setReaction} />
+        <ReactionSelector
+          setReaction={(reaction) => {
+            setReaction(reaction);
+          }}
+        />
       )}
 
       <LiveCursors others={others} />
