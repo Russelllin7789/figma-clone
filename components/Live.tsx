@@ -2,10 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import {
   useBroadcastEvent,
   useEventListener,
-  useMutation,
   useMyPresence,
   useOthers,
-  useStorage,
 } from "@/liveblocks.config";
 import LiveCursors from "./cursor/LiveCursors";
 import CursorChat from "./cursor/CursorChat";
@@ -28,10 +26,6 @@ const Live = ({ canvasRef }: Props) => {
   const [reactions, setReactions] = useState<Reaction[]>([]);
 
   const broadcast = useBroadcastEvent();
-
-  const canvasObject = useStorage((root) => root.canvasObject);
-
-  const syncShapeInStorage = useMutation(({ storage }, object) => {}, []);
 
   // *** Clear the reactions after 1 sec ***
   useInterval(() => {
