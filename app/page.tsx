@@ -14,6 +14,7 @@ import {
   handleCanvasMouseUp,
   handleResize,
   renderCanvas,
+  handleCanvasObjectModified,
 } from "@/lib/canvas";
 import { ActiveElement } from "@/types/type";
 
@@ -50,6 +51,7 @@ export default function Page() {
   useEffect(() => {
     const canvas = initializeFabric({ canvasRef, fabricRef });
 
+    // listen for mouse events
     canvas.on("mouse:down", (options) => {
       handleCanvasMouseDown({
         options,
@@ -81,12 +83,21 @@ export default function Page() {
       });
     });
 
+    // sync the whole canvasObjects with other users
+    canvas.on("object:modified", (options) => {
+      handleCanvasObjectModified({
+        options,
+        syncShapeInStorage,
+      });
+    });
+
     window.addEventListener("resize", () => {
       handleResize({ fabricRef });
     });
   }, []);
 
   useEffect(() => {
+    // sync the whole fabricRef with other users
     renderCanvas({
       fabricRef,
       canvasObjects,
