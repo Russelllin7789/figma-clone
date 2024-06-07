@@ -13,6 +13,7 @@ import {
   initializeFabric,
   handleCanvasMouseUp,
   handleResize,
+  renderCanvas,
 } from "@/lib/canvas";
 import { ActiveElement } from "@/types/type";
 
@@ -84,6 +85,14 @@ export default function Page() {
       handleResize({ fabricRef });
     });
   }, []);
+
+  useEffect(() => {
+    renderCanvas({
+      fabricRef,
+      canvasObjects,
+      activeObjectRef,
+    });
+  }, [canvasObjects]);
 
   return (
     <main className="h-screen overflow-hidden">
