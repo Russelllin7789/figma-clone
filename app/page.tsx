@@ -18,6 +18,7 @@ import {
 } from "@/lib/canvas";
 import { ActiveElement } from "@/types/type";
 import { defaultNavElement } from "@/constants";
+import { handleDelete } from "@/lib/key-events";
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -56,6 +57,11 @@ export default function Page() {
     return canvasObjects.size === 0;
   }, []);
 
+  const deleteShapeFromStorage = useMutation(({ storage }, objectId) => {
+    const canvasObjects = storage.get("canvasObjects");
+    canvasObjects.delete(objectId);
+  }, []);
+
   const handleActiveElement = (element: ActiveElement) => {
     setActiveElement(element);
 
@@ -67,7 +73,9 @@ export default function Page() {
         fabricRef.current?.clear();
         setActiveElement(defaultNavElement);
         break;
-
+      case "delete":
+        handleDelete(fabricRef.current as any, deleteShapeFromStorage);
+        setActiveElement(defaultNavElement);
       default:
         break;
     }
@@ -120,6 +128,10 @@ export default function Page() {
     window.addEventListener("resize", () => {
       handleResize({ fabricRef });
     });
+
+    return () => {
+      canvas.dispose();
+    };
   }, []);
 
   useEffect(() => {
