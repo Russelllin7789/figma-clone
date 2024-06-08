@@ -17,6 +17,7 @@ import {
   handleCanvasObjectModified,
 } from "@/lib/canvas";
 import { ActiveElement } from "@/types/type";
+import { defaultNavElement } from "@/constants";
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -43,8 +44,33 @@ export default function Page() {
     canvasObjects.set(objectId, shapeData);
   }, []);
 
+  const deleteAllShapes = useMutation(({ storage }) => {
+    const canvasObjects = storage.get("canvasObjects");
+
+    if (!canvasObjects || canvasObjects.size === 0) return true;
+
+    for (const [key, value] of canvasObjects.entries()) {
+      canvasObjects.delete(key);
+    }
+
+    return canvasObjects.size === 0;
+  }, []);
+
   const handleActiveElement = (element: ActiveElement) => {
     setActiveElement(element);
+
+    switch (element?.value) {
+      case "reset":
+        // clear the canvasObjects from liveblock storage
+        deleteAllShapes();
+        // clear the fabric canvas
+        fabricRef.current?.clear();
+        setActiveElement(defaultNavElement);
+        break;
+
+      default:
+        break;
+    }
     selectedShapeRef.current = element?.value as string;
   };
 
