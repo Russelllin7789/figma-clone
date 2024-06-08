@@ -32,6 +32,7 @@ export default function Page() {
     value: "",
     icon: "",
   });
+  // *** canvas object would be a map ***
   const canvasObjects = useStorage((root) => root.canvasObjects);
 
   const syncShapeInStorage = useMutation(({ storage }, object) => {
@@ -151,7 +152,10 @@ export default function Page() {
       />
 
       <section className="flex h-full flex-row">
-        <LeftSidebar />
+        <LeftSidebar
+          // canvas object is a map
+          allShapes={Array.from(canvasObjects)}
+        />
         <Live canvasRef={canvasRef} />
         <RightSidebar />
       </section>
