@@ -16,6 +16,7 @@ import {
   renderCanvas,
   handleCanvasObjectModified,
   handleCanvasSelectionCreated,
+  handleCanvasObjectScaling,
 } from "@/lib/canvas";
 import { ActiveElement, Attributes } from "@/types/type";
 import { defaultNavElement } from "@/constants";
@@ -32,6 +33,7 @@ export default function Page() {
   const activeObjectRef = useRef<fabric.Object | null>(null);
   const selectedShapeRef = useRef<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  // set the ref to true when user editing canvas objects using the right side bar functions
   const isEditingRef = useRef(false);
   const [activeElement, setActiveElement] = useState<ActiveElement>({
     name: "",
@@ -151,6 +153,13 @@ export default function Page() {
       handleCanvasObjectModified({
         options,
         syncShapeInStorage,
+      });
+    });
+
+    canvas.on("object:scaling", (options) => {
+      handleCanvasObjectScaling({
+        options,
+        setElementAttributes,
       });
     });
 
