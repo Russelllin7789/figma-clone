@@ -20,20 +20,20 @@ const RightSidebar = ({
   const handleInputChange = (property: string, value: string) => {
     if (!isEditingRef.current) {
       isEditingRef.current = true;
-
-      setElementAttributes((prev) => ({
-        ...prev,
-        [property]: value,
-      }));
-
-      modifyShape({
-        canvas: fabricRef.current as fabric.Canvas,
-        property,
-        value,
-        activeObjectRef,
-        syncShapeInStorage,
-      });
     }
+
+    setElementAttributes((prev) => ({
+      ...prev,
+      [property]: value,
+    }));
+
+    modifyShape({
+      canvas: fabricRef.current as fabric.Canvas,
+      property,
+      value,
+      activeObjectRef,
+      syncShapeInStorage,
+    });
   };
 
   return (
