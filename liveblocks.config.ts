@@ -6,19 +6,19 @@ const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
   // authEndpoint: "/api/liveblocks-auth",
   // throttle: 100,
-  // async resolveUsers({ userIds }) {
-  //   // Used only for Comments and Notifications. Return a list of user information
-  //   // retrieved from `userIds`. This info is used in comments, mentions etc.
+  async resolveUsers({ userIds }) {
+    // Used only for Comments. Return a list of user information retrieved
+    // from `userIds`. This info is used in comments, mentions etc.
 
-  //   // const usersData = await __fetchUsersFromDB__(userIds);
-  //   //
-  //   // return usersData.map((userData) => ({
-  //   //   name: userData.name,
-  //   //   avatar: userData.avatar.src,
-  //   // }));
+    // const usersData = await __fetchUsersFromDB__(userIds);
+    //
+    // return usersData.map((userData) => ({
+    //   name: userData.name,
+    //   avatar: userData.avatar.src,
+    // }));
 
-  //   return [];
-  // },
+    return [{ userIds }];
+  },
   // async resolveMentionSuggestions({ text }) {
   //   // Used only for Comments. Return a list of userIds that match `text`.
   //   // These userIds are used to create a mention list when typing in the
@@ -81,9 +81,11 @@ type RoomEvent = ReactionEvent;
 // Optionally, when using Comments, ThreadMetadata represents metadata on
 // each thread. Can only contain booleans, strings, and numbers.
 export type ThreadMetadata = {
-  // resolved: boolean;
-  // quote: string;
-  // time: number;
+  resolved: boolean;
+  zIndex: number;
+  time?: number;
+  x: number;
+  y: number;
 };
 
 // Room-level hooks, use inside `RoomProvider`
