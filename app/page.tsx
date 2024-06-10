@@ -17,6 +17,7 @@ import {
   handleCanvasObjectModified,
   handleCanvasSelectionCreated,
   handleCanvasObjectScaling,
+  handlePathCreated,
 } from "@/lib/canvas";
 import { ActiveElement, Attributes } from "@/types/type";
 import { defaultNavElement } from "@/constants";
@@ -160,6 +161,13 @@ export default function Page() {
       handleCanvasObjectScaling({
         options,
         setElementAttributes,
+      });
+    });
+
+    canvas.on("path:created", (options) => {
+      handlePathCreated({
+        options,
+        syncShapeInStorage,
       });
     });
 
